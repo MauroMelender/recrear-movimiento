@@ -8,18 +8,18 @@ size = Vector2(1173, 128)
 
 [node name="Main" type="Node" unique_id=422831749]
 
-[node name="Area2D" type="Area2D" parent="." unique_id=1443800324]
-position = Vector2(580, 594)
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1209893929]
-shape = SubResource("RectangleShape2D_0xm2m")
-
-[node name="Sprite2D" type="Sprite2D" parent="Area2D" unique_id=1524700821]
-position = Vector2(-2, 0)
-scale = Vector2(9.0625, 1)
-texture = ExtResource("1_ig7tw")
-
 [node name="CharacterBody2D" parent="." unique_id=1481881666 instance=ExtResource("2_0xm2m")]
 position = Vector2(596, 472)
 motion_mode = 0
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=1883965058]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1209893929]
+position = Vector2(580, 594)
+shape = SubResource("RectangleShape2D_0xm2m")
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D" unique_id=1524700821]
+modulate = Color(0.20737365, 0.36979708, 0, 1)
+position = Vector2(578, 594)
+scale = Vector2(9.0625, 1)
+texture = ExtResource("1_ig7tw")
