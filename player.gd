@@ -1,45 +1,31 @@
 extends CharacterBody2D
 class_name Player
 
-@onready var sprite = $AnimatedSprite2D # Asegúrate que el nombre coincida
-@export var running_speed: float = 300.0
-@export var jump_velocity: float = -400.0
+@export var running_speed: float = 400.0
+@export var jump_velocity: float = -500.0
+@export var acceleration: float = 10.0
+@export var air_acceleration: float = 2.0
+@export var air_friction: float = 0.0 # <--- Asegúrate que sea 0
+@export var wall_jump_pushback: float = 600.0
+@export var wall_jump_force: float = -600.0
+@export var wall_slide_gravity: float = 150.0
 
-const SPEED = 300.0
-const JUMP_VELOCITY = -400.0
+# NO pongas lógica de movimiento aquí dentro de _physics_process
+# Deja que el PlayerControl se encargue de modificar la 'velocity'
+func _physics_process(_delta):
+	pass 
 
-S
-func _physics_process(delta: float) -> void:
-	# Add the gravity.
-	if not is_on_floor():
-		velocity += get_gravity() * delta
-
-	# Handle jump.
-	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
-		velocity.y = JUMP_VELOCITY
-
-	# Get the input direction and handle the movement/deceleration.
-	# As good practice, you should replace UI actions with custom gameplay actions.
-	var direction := Input.get_axis("ui_left", "ui_right")
-	if direction:
-		velocity.x = direction * SPEED
+func set_facing_direction(dir: float):
+	# Usamos el nombre exacto del nodo: AnimatedSprite2D
+	if $AnimatedSprite2D: 
+		if dir > 0:
+			$AnimatedSprite2D.flip_h = true
+		elif dir < 0:
+			$AnimatedSprite2D.flip_h = false
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-
-	move_and_slide()
+		print("Error: No se encuentra el nodo AnimatedSprite2D en el Player")
 
 func play_animation(anim_name: String):
-	# Verificamos si la animación existe en los "SpriteFrames"
-	if sprite.sprite_frames.has_animation(anim_name):
-		# Solo reproducir si no es la que ya está sonando
-		if sprite.animation != anim_name:
-			sprite.play(anim_name)
-	else:
-		# Esto saldrá en la consola si escribes mal el nombre en el otro script
-		print("OJO: La animación '", anim_name, "' no existe en tu AnimatedSprite2D")
-
-func set_facing_direction(direction: float):
-	if direction > 0:
-		sprite.flip_h = true  # Mirar a la derecha
-	elif direction < 0:
-		sprite.flip_h = false  # Mirar a la izquierda
+	# Para AnimatedSprite2D se usa .animation y .play()
+	if $AnimatedSprite2D.animation != anim_name:
+		$AnimatedSprite2D.play(anim_name)

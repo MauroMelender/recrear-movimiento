@@ -38,9 +38,14 @@ radius = 16.0
 height = 122.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1481881666]
-motion_mode = 1
+safe_margin = 0.2
 script = ExtResource("1_kne1u")
 jump_velocity = -700.0
+acceleration = 20.0
+air_acceleration = 20.0
+air_friction = 10.0
+wall_jump_pushback = 400.0
+wall_jump_force = -700.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1464964639]
 position = Vector2(0, -26.98)
