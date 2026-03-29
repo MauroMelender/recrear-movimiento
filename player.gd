@@ -40,6 +40,6 @@ func play_animation(anim_name: String):
 
 func set_facing_direction(direction: float):
 	if direction > 0:
-		sprite.flip_h = false # Mirar a la derecha
+		sprite.flip_h = true  # Mirar a la derecha
 	elif direction < 0:
-		sprite.flip_h = true  # Mirar a la izquierda
+		sprite.flip_h = false  # Mirar a la izquierda
