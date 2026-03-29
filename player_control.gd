@@ -33,6 +33,11 @@ func _physics_process(delta: float):
 
 		STATE.RUNNING:
 			var input_dir = Input.get_axis("ui_left", "ui_right")
+			
+			# Flip
+			if input_dir != 0:
+				player.set_facing_direction(input_dir)
+			
 			player.velocity.x = input_dir * player.running_speed
 			player.play_animation("run")
 			
@@ -46,9 +51,23 @@ func _physics_process(delta: float):
 		STATE.JUMPING:
 			player.play_animation("jump")
 			
-			# Movimiento lateral en el aire (opcional, para que no caiga como piedra)
+			# Salto Variable
+			if Input.is_action_just_released("ui_up") and player.velocity.y < 0:
+				# Velocidad de Frenado 
+				player.velocity.y *= 0.4 
+
+			# 2. Movimiento lateral en el aire
 			var input_dir = Input.get_axis("ui_left", "ui_right")
 			player.velocity.x = input_dir * player.running_speed
+			if input_dir != 0:
+				player.set_facing_direction(input_dir)
+
+			# Si toca el suelo
+			if player.is_on_floor() and player.velocity.y >= 0:
+				if input_dir != 0:
+					current_state = STATE.RUNNING
+				else:
+					current_state = STATE.IDLE
 
 			# CONDICIÓN DE SALIDA: Si toca el suelo y está cayendo (velocity.y >= 0)
 			if player.is_on_floor() and player.velocity.y >= 0:

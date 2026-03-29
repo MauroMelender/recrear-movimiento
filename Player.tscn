@@ -1,15 +1,16 @@
 [gd_scene format=3 uid="uid://bbe4ob0siauam"]
 
 [ext_resource type="Script" uid="uid://ypvclkjg1sdp" path="res://player.gd" id="1_kne1u"]
-[ext_resource type="Texture2D" uid="uid://b8igrg60xs4yv" path="res://sprites/GodotIdle.png" id="1_kpjcp"]
-[ext_resource type="Texture2D" uid="uid://dtlihb4k0e6xw" path="res://sprites/Godot2.png" id="2_kne1u"]
+[ext_resource type="Texture2D" uid="uid://2wxu08nbkkbg" path="res://sprites/HornetIdle.png" id="2_cxr5p"]
+[ext_resource type="Texture2D" uid="uid://d6p86e5sycmv" path="res://sprites/HornetJump.png" id="3_tdg3f"]
+[ext_resource type="Texture2D" uid="uid://c5ybr8k66hooy" path="res://sprites/HornetRun.png" id="4_dtqjt"]
 [ext_resource type="Script" uid="uid://k68m07o2dts0" path="res://player_control.gd" id="4_e80uo"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kpjcp"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("1_kpjcp")
+"texture": ExtResource("2_cxr5p")
 }],
 "loop": true,
 "name": &"idle",
@@ -17,25 +18,33 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("2_kne1u")
+"texture": ExtResource("3_tdg3f")
 }],
 "loop": true,
-"name": &"running",
+"name": &"jump",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_dtqjt")
+}],
+"loop": true,
+"name": &"run",
 "speed": 5.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kne1u"]
-radius = 21.0
-height = 100.0
+radius = 16.0
+height = 122.0
 
 [node name="Player" type="CharacterBody2D" unique_id=1481881666]
 motion_mode = 1
 script = ExtResource("1_kne1u")
-jump_velocity = -650.0
-metadata/_edit_group_ = true
+jump_velocity = -601.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1464964639]
-scale = Vector2(0.1, 0.2)
+position = Vector2(0, -26.98)
+scale = Vector2(0.4, 0.4)
 sprite_frames = SubResource("SpriteFrames_kpjcp")
 animation = &"idle"
 

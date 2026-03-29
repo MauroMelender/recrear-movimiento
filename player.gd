@@ -5,16 +5,6 @@ class_name Player
 @export var running_speed: float = 300.0
 @export var jump_velocity: float = -400.0
 
-func play_animation(anim_name: String):
-	# Verificamos si la animación existe en los "SpriteFrames"
-	if sprite.sprite_frames.has_animation(anim_name):
-		# Solo reproducir si no es la que ya está sonando
-		if sprite.animation != anim_name:
-			sprite.play(anim_name)
-	else:
-		# Esto saldrá en la consola si escribes mal el nombre en el otro script
-		print("OJO: La animación '", anim_name, "' no existe en tu AnimatedSprite2D")
-
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
 
@@ -37,3 +27,19 @@ func _physics_process(delta: float) -> void:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 
 	move_and_slide()
+
+func play_animation(anim_name: String):
+	# Verificamos si la animación existe en los "SpriteFrames"
+	if sprite.sprite_frames.has_animation(anim_name):
+		# Solo reproducir si no es la que ya está sonando
+		if sprite.animation != anim_name:
+			sprite.play(anim_name)
+	else:
+		# Esto saldrá en la consola si escribes mal el nombre en el otro script
+		print("OJO: La animación '", anim_name, "' no existe en tu AnimatedSprite2D")
+
+func set_facing_direction(direction: float):
+	if direction > 0:
+		sprite.flip_h = false # Mirar a la derecha
+	elif direction < 0:
+		sprite.flip_h = true  # Mirar a la izquierda
