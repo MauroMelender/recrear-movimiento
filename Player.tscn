@@ -31,9 +31,10 @@ height = 100.0
 [node name="Player" type="CharacterBody2D" unique_id=1481881666]
 motion_mode = 1
 script = ExtResource("1_kne1u")
+jump_velocity = -650.0
 metadata/_edit_group_ = true
 
-[node name="AnimationPlayer" type="AnimatedSprite2D" parent="." unique_id=1464964639]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1464964639]
 scale = Vector2(0.1, 0.2)
 sprite_frames = SubResource("SpriteFrames_kpjcp")
 animation = &"idle"

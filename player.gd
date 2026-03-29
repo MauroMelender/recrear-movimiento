@@ -1,15 +1,19 @@
 extends CharacterBody2D
 class_name Player
 
-@onready var sprite = $AnimationPlayer # Asegúrate que el nombre coincida
-@export var running_speed: float = 300.0 
-@export var jump_velocity: float = -400.0 # Ya que estás, puedes exportar el salto
+@onready var sprite = $AnimatedSprite2D # Asegúrate que el nombre coincida
+@export var running_speed: float = 300.0
+@export var jump_velocity: float = -400.0
 
-@onready var anim_player: AnimationPlayer = $AnimationPlayer
-
-func play_animation(anim_name: String): #Caja vacia, se rellena en Player control segun el STATE
-	if anim_player.has_animation(anim_name) and anim_player.current_animation != anim_name:
-		anim_player.play(anim_name)
+func play_animation(anim_name: String):
+	# Verificamos si la animación existe en los "SpriteFrames"
+	if sprite.sprite_frames.has_animation(anim_name):
+		# Solo reproducir si no es la que ya está sonando
+		if sprite.animation != anim_name:
+			sprite.play(anim_name)
+	else:
+		# Esto saldrá en la consola si escribes mal el nombre en el otro script
+		print("OJO: La animación '", anim_name, "' no existe en tu AnimatedSprite2D")
 
 const SPEED = 300.0
 const JUMP_VELOCITY = -400.0
