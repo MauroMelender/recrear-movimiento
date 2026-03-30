@@ -58,3 +58,8 @@ shape = SubResource("CapsuleShape2D_kne1u")
 
 [node name="PlayerControl" type="Node" parent="." unique_id=415277098]
 script = ExtResource("4_e80uo")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1915852905]
+process_callback = 0
+position_smoothing_enabled = true
+position_smoothing_speed = 7.0

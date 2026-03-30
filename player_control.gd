@@ -102,13 +102,15 @@ func _physics_process(delta: float):
 		STATE.JUMPING:
 			player.play_animation("jump")
 			
+			# --- NUEVO: LÓGICA DE SALTO VARIABLE ---
+			# Si soltamos el botón mientras subimos, cortamos la velocidad a la mitad
+			if Input.is_action_just_released("ui_up") and player.velocity.y < 0:
+				player.velocity.y *= 0.5
+
 			# --- DETECCIÓN AUTOMÁTICA DE PARED ---
-			# Si el personaje está tocando una pared (is_on_wall) 
-			# Y está cayendo (velocity.y > 0)
-			# SE PEGA SOLO, sin importar el input_dir
 			if player.is_on_wall() and not player.is_on_floor() and player.velocity.y > 0:
-				# Opcional: Detenemos la velocidad X para que se "pegue" visualmente
 				player.velocity.x = 0 
+				is_wall_jumping = false # Reset de inercia al tocar pared
 				current_state = STATE.WALL_SLIDING
 
 		STATE.WALL_SLIDING:
