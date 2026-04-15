@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://bx34vgadmts34"]
+
+[ext_resource type="Script" uid="uid://xosd8drfbwg" path="res://vfx_h_pasos.gd" id="1_8bp0u"]
+
+[sub_resource type="Curve" id="Curve_58bes"]
+_data = [Vector2(0, 0.764045), 0.0, 3.9915736, 0, 0, Vector2(0.4653061, 1), -2.5692883, -2.5692883, 0, 0, Vector2(1, 0), -0.65198076, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="Gradient" id="Gradient_y44e5"]
+offsets = PackedFloat32Array(0.1324201, 1)
+colors = PackedColorArray(1, 1, 1, 0.9137255, 0.20392157, 0.19607843, 0.19215687, 0.27058825)
+
+[node name="VFX_H_Pasos" type="Node2D" unique_id=845160056]
+script = ExtResource("1_8bp0u")
+
+[node name="par_pasos" type="CPUParticles2D" parent="." unique_id=1597162101]
+emitting = false
+amount = 7
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+randomness = 1.0
+direction = Vector2(1, -2.98)
+spread = 59.72
+gravity = Vector2(0, 0)
+initial_velocity_min = 23.25
+initial_velocity_max = 46.5
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+scale_amount_curve = SubResource("Curve_58bes")
+color_ramp = SubResource("Gradient_y44e5")

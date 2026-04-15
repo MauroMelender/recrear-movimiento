@@ -23,7 +23,8 @@ func set_facing_direction(dir: float):
 		elif dir < 0:
 			$AnimatedSprite2D.flip_h = false
 	else:
-		print("Error: No se encuentra el nodo AnimatedSprite2D en el Player")
+		print("Aalgo anda mal aca otra vez AnimatedSprite2D")
+
 
 func play_animation(anim_name: String):
 	# Para AnimatedSprite2D se usa .animation y .play()

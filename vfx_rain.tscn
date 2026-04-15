@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://cy26t0uqe6gsp"]
+
+[sub_resource type="Gradient" id="Gradient_x4d8x"]
+offsets = PackedFloat32Array(0.19634703, 0.96803653, 1)
+colors = PackedColorArray(0.7411765, 0.8666667, 0.99607843, 0.06666667, 0.6784314, 0.7372549, 1, 0.21960784, 0.116243415, 8.663535e-07, 0.5952433, 0.27058825)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_4ler2"]
+gradient = SubResource("Gradient_x4d8x")
+
+[sub_resource type="Curve" id="Curve_x4d8x"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_4ler2"]
+_limits = [0.0, 15.2, 0.0, 1.0]
+_data = [Vector2(0, 6.7605114), 0.0, 42.46987, 0, 0, Vector2(1, 13.662922), -16.690357, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_d0nc0"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_qt7ax"]
+curve_x = SubResource("Curve_x4d8x")
+curve_y = SubResource("Curve_4ler2")
+curve_z = SubResource("Curve_d0nc0")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_07ck1"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(256, 1, 0)
+spread = 180.0
+initial_velocity_min = 7.75
+initial_velocity_max = 7.75
+gravity = Vector3(30, 980, 0)
+scale_max = 4.0
+scale_curve = SubResource("CurveXYZTexture_qt7ax")
+color_ramp = SubResource("GradientTexture1D_4ler2")
+collision_mode = 2
+
+[node name="VFX_Rain" type="Node2D" unique_id=411849381]
+scale = Vector2(2, 2)
+
+[node name="par_rain" type="GPUParticles2D" parent="." unique_id=193131315]
+position = Vector2(-7.9999995, -8)
+scale = Vector2(2.5, 1.126)
+amount = 1300
+lifetime = 2.0
+fixed_fps = 0
+collision_base_size = 10.62
+draw_order = 0
+process_material = SubResource("ParticleProcessMaterial_07ck1")

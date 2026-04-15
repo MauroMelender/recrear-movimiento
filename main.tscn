@@ -2,6 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://fp6jiq4jaedc" path="res://icon.svg" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://bbe4ob0siauam" path="res://Player.tscn" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://cy26t0uqe6gsp" path="res://vfx_rain.tscn" id="3_h2yge"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0xm2m"]
 size = Vector2(1128, 74)
@@ -9,11 +10,22 @@ size = Vector2(1128, 74)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_h2yge"]
 size = Vector2(62.19676, 254.06914)
 
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_h2yge"]
+polygon = PackedVector2Array(-552, 1312, 584, 1312, 584, 1384, -552, 1384)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_1bvp3"]
+polygon = PackedVector2Array(0, -200, 64, -200, 64, 576, 0, 576)
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_lquwl"]
+polygon = PackedVector2Array(256, -192, 320, -192, 320, 320, 256, 320)
+
 [node name="Main" type="Node" unique_id=422831749]
 
 [node name="CharacterBody2D" parent="." unique_id=1481881666 instance=ExtResource("2_0xm2m")]
 position = Vector2(596, 472)
-motion_mode = 0
+
+[node name="VFX_Rain" parent="CharacterBody2D" unique_id=411849381 instance=ExtResource("3_h2yge")]
+position = Vector2(-12, -408)
 
 [node name="Suelo" type="StaticBody2D" parent="." unique_id=1883965058]
 
@@ -91,3 +103,13 @@ shape = SubResource("RectangleShape2D_h2yge")
 position = Vector2(-1.0728836e-06, -7.6293945e-06)
 scale = Vector2(0.49999997, 2)
 texture = ExtResource("1_ig7tw")
+
+[node name="Floor_Rain_Colission" type="LightOccluder2D" parent="." unique_id=8758765]
+position = Vector2(560, -728)
+occluder = SubResource("OccluderPolygon2D_h2yge")
+
+[node name="Wall_Rain_Colission" type="LightOccluder2D" parent="." unique_id=1661990177]
+occluder = SubResource("OccluderPolygon2D_1bvp3")
+
+[node name="Wall_Rain_Colission2" type="LightOccluder2D" parent="." unique_id=173482787]
+occluder = SubResource("OccluderPolygon2D_lquwl")
