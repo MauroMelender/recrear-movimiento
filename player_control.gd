@@ -10,9 +10,8 @@ var is_wall_jumping: bool = false
 enum STATE { IDLE, RUNNING, JUMPING, FALLING, WALL_SLIDING }
 var current_state: STATE = STATE.IDLE
 
-func _physics_process(delta: float):
-	if player == null: return 
-
+func _physics_process(delta: float): 
+	if player == null: return  
 	# --- 1. CAPTURA DE INPUT ---
 	var input_dir = 0.0
 	var left = Input.is_action_pressed("ui_left")
@@ -29,49 +28,45 @@ func _physics_process(delta: float):
 		input_dir = 1.0
 		last_direction = 1.0
 
-	# --- 2. LÓGICA DE TRANSICIÓN DE ESTADOS (Evita reinicio de animaciones) ---
+	# --- 2. LÓGICA DE TRANSICIÓN (Con Enganche Magnético) ---
+	var wall_sensor_distance = 2.0 # Cuántos píxeles "busca" la pared
+	
 	match current_state:
 		STATE.IDLE:
-			if not player.is_on_floor():
-				current_state = STATE.FALLING
+			if not player.is_on_floor(): current_state = STATE.FALLING
 			elif Input.is_action_just_pressed("ui_up"):
 				player.velocity.y = player.jump_velocity
 				current_state = STATE.JUMPING
-			elif input_dir != 0:
-				current_state = STATE.RUNNING
+			elif input_dir != 0: current_state = STATE.RUNNING
 
 		STATE.RUNNING:
-			if not player.is_on_floor():
-				current_state = STATE.FALLING
+			if not player.is_on_floor(): current_state = STATE.FALLING
 			elif Input.is_action_just_pressed("ui_up"):
 				player.velocity.y = player.jump_velocity
 				current_state = STATE.JUMPING
-			elif input_dir == 0 and abs(player.velocity.x) < 10.0:
-				current_state = STATE.IDLE
+			elif input_dir == 0 and abs(player.velocity.x) < 10.0: current_state = STATE.IDLE
 
-		STATE.JUMPING:
+		STATE.JUMPING, STATE.FALLING:
 			if player.is_on_floor():
 				current_state = STATE.IDLE if input_dir == 0 else STATE.RUNNING
-			elif player.is_on_wall() and input_dir != 0:
-				current_state = STATE.WALL_SLIDING
-			elif player.velocity.y >= 0:
-				current_state = STATE.FALLING
-
-		STATE.FALLING:
-			if player.is_on_floor():
-				current_state = STATE.IDLE if input_dir == 0 else STATE.RUNNING
-			elif player.is_on_wall() and input_dir != 0:
-				current_state = STATE.WALL_SLIDING
-			elif player.velocity.y < 0:
-				current_state = STATE.JUMPING
+			else:
+				# RAYCAST INVISIBLE (test_move):
+				# Probamos si hay una pared hacia donde estamos mirando o moviéndonos
+				var check_dir = input_dir if input_dir != 0 else last_direction
+				var collision_near = player.test_move(player.global_transform, Vector2(check_dir * wall_sensor_distance, 0))
+				
+				if collision_near and input_dir != 0:
+					current_state = STATE.WALL_SLIDING
+				elif player.velocity.y >= 0:
+					current_state = STATE.FALLING
 
 		STATE.WALL_SLIDING:
 			if player.is_on_floor():
 				current_state = STATE.IDLE
-			elif not player.is_on_wall():
+			elif not player.is_on_wall() and not player.test_move(player.global_transform, Vector2(last_direction * wall_sensor_distance, 0)):
 				current_state = STATE.FALLING
 
-	# --- 3. FÍSICA HORIZONTAL (Tu lógica original de impulso e inercia) ---
+	# --- 3. FÍSICA HORIZONTAL ---
 	var target_vel_x = input_dir * player.running_speed
 	var accel = 0.0
 	
@@ -86,7 +81,7 @@ func _physics_process(delta: float):
 
 	player.velocity.x = lerp(player.velocity.x, target_vel_x, accel * delta)
 
-	# --- 4. EJECUCIÓN DE ANIMACIONES Y MECÁNICAS DE ESTADO ---
+	# --- 4. EJECUCIÓN DE ANIMACIONES Y MECÁNICAS ---
 	match current_state:
 		STATE.IDLE:
 			play_anim("idle_r" if last_direction > 0 else "idle_l")
@@ -95,36 +90,37 @@ func _physics_process(delta: float):
 			play_anim("run_r" if input_dir > 0 else "run_l")
 
 		STATE.JUMPING:
-			var jump_dir = input_dir if input_dir != 0 else last_direction
-			play_anim("jump_r" if jump_dir > 0 else "jump_l")
-			# Variable Jump Height (Salto corto)
+			play_anim("jump_r" if (input_dir if input_dir != 0 else last_direction) > 0 else "jump_l")
 			if Input.is_action_just_released("ui_up") and player.velocity.y < 0:
 				player.velocity.y *= 0.5
 		
 		STATE.FALLING:
-			var fall_dir = input_dir if input_dir != 0 else last_direction
-			play_anim("falling_r" if fall_dir > 0 else "falling_l")
+			play_anim("falling_r" if (input_dir if input_dir != 0 else last_direction) > 0 else "falling_l")
 
 		STATE.WALL_SLIDING:
 			var wall_normal = player.get_wall_normal()
-			if wall_normal.x > 0:
+			# Si por el test_move entramos pero aún no tocamos la pared físicamente, 
+			# usamos last_direction para elegir la animación
+			var side = wall_normal.x if player.is_on_wall() else -last_direction
+			
+			if side > 0:
 				play_anim("wall_slide_l")
 				last_direction = -1.0
 			else:
 				play_anim("wall_slide_r")
 				last_direction = 1.0
 
-			# Gravedad reducida en pared
 			if player.velocity.y < 0: player.velocity.y = 0
 			player.velocity.y = min(player.velocity.y, player.wall_slide_gravity)
 			
-			# Lógica de Wall Jump (Impulso recuperado)
 			if Input.is_action_just_pressed("ui_up"):
-				player.velocity.x = wall_normal.x * player.wall_jump_pushback
+				# Recuperamos el impulso lateral del wall jump
+				var jump_side = wall_normal.x if player.is_on_wall() else -last_direction
+				player.velocity.x = jump_side * player.wall_jump_pushback
 				player.velocity.y = player.wall_jump_force
 				is_wall_jumping = true
-				last_direction = wall_normal.x
-				current_state = STATE.JUMPING # Transición inmediata para la animación
+				last_direction = jump_side
+				current_state = STATE.JUMPING
 
 	handle_gravity(delta)
 	player.move_and_slide()

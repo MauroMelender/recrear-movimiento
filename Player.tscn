@@ -554,10 +554,11 @@ wall_jump_pushback = 400.0
 wall_jump_force = -700.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1464964639]
-position = Vector2(34.325, -12.375)
+position = Vector2(-9.875, -12.375)
 scale = Vector2(0.4, 0.4)
 sprite_frames = SubResource("SpriteFrames_kpjcp")
-animation = &"wall_impact"
+animation = &"jump"
+frame_progress = 0.08610555
 
 [node name="CharacterColision" type="CollisionShape2D" parent="." unique_id=486978369]
 position = Vector2(-1, 0)
