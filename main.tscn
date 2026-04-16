@@ -1,23 +1,21 @@
 [gd_scene format=3 uid="uid://kchk6hvidhvu"]
 
-[ext_resource type="Texture2D" uid="uid://fp6jiq4jaedc" path="res://icon.svg" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://bbe4ob0siauam" path="res://Player.tscn" id="2_0xm2m"]
+[ext_resource type="Texture2D" uid="uid://pyhtclljonvk" path="res://sprites/scenary/forum_floor_big.png" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://cy26t0uqe6gsp" path="res://vfx_rain.tscn" id="3_h2yge"]
+[ext_resource type="Texture2D" uid="uid://wrjrx3ybeq8g" path="res://sprites/scenary/wood_wall_big.png" id="4_1bvp3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0xm2m"]
-size = Vector2(1128, 74)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_h2yge"]
-size = Vector2(62.19676, 254.06914)
+size = Vector2(440, 80)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_h2yge"]
-polygon = PackedVector2Array(-552, 1312, 584, 1312, 584, 1384, -552, 1384)
+polygon = PackedVector2Array(220, -40, 220, 40, -220, 40, -220, -40)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_h2yge"]
+size = Vector2(168, 640)
 
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_1bvp3"]
-polygon = PackedVector2Array(0, -200, 64, -200, 64, 576, 0, 576)
-
-[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_lquwl"]
-polygon = PackedVector2Array(256, -192, 320, -192, 320, 320, 256, 320)
+polygon = PackedVector2Array(-32, 128, 32, 128, 32, -128, -32, -128)
 
 [node name="Main" type="Node" unique_id=422831749]
 
@@ -28,88 +26,109 @@ position = Vector2(596, 472)
 position = Vector2(-12, -408)
 
 [node name="Suelo" type="StaticBody2D" parent="." unique_id=1883965058]
+position = Vector2(440, 720)
+scale = Vector2(2, 2)
+metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Suelo" unique_id=1209893929]
-position = Vector2(580, 621)
 shape = SubResource("RectangleShape2D_0xm2m")
 
 [node name="Sprite2D" type="Sprite2D" parent="Suelo" unique_id=1524700821]
 modulate = Color(0.20737365, 0.36979708, 0, 1)
-position = Vector2(578, 621)
-scale = Vector2(9.0625, 0.578125)
-texture = ExtResource("1_ig7tw")
+texture = ExtResource("3_1bvp3")
+
+[node name="Floor_Rain_Colission" type="LightOccluder2D" parent="Suelo" unique_id=8758765]
+scale = Vector2(0.5, 0.5)
+occluder = SubResource("OccluderPolygon2D_h2yge")
+
+[node name="Suelo2" type="StaticBody2D" parent="." unique_id=2067586878]
+position = Vector2(824, -352)
+scale = Vector2(2, 2)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Suelo2" unique_id=1765645809]
+shape = SubResource("RectangleShape2D_0xm2m")
+
+[node name="Sprite2D" type="Sprite2D" parent="Suelo2" unique_id=2065322886]
+modulate = Color(0.20737365, 0.36979708, 0, 1)
+texture = ExtResource("3_1bvp3")
+
+[node name="Floor_Rain_Colission2" type="LightOccluder2D" parent="Suelo2" unique_id=1654597951]
+occluder = SubResource("OccluderPolygon2D_h2yge")
 
 [node name="Pared" type="StaticBody2D" parent="." unique_id=735633249]
-position = Vector2(32, 448)
+position = Vector2(72, 320)
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Pared" unique_id=1288581735]
-scale = Vector2(0.9999992, 0.9999993)
+position = Vector2(4.000002, -7.6293945e-06)
 shape = SubResource("RectangleShape2D_h2yge")
 
 [node name="Sprite2D" type="Sprite2D" parent="Pared" unique_id=1879335141]
 position = Vector2(-1.0728836e-06, -7.6293945e-06)
-scale = Vector2(0.49999997, 2)
-texture = ExtResource("1_ig7tw")
+texture = ExtResource("4_1bvp3")
 
-[node name="Pared2" type="StaticBody2D" parent="." unique_id=1937301881]
-position = Vector2(32, 192)
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Pared2" unique_id=522567657]
-scale = Vector2(0.9999992, 0.9999993)
-shape = SubResource("RectangleShape2D_h2yge")
-
-[node name="Sprite2D" type="Sprite2D" parent="Pared2" unique_id=1395412136]
-position = Vector2(-1.0728836e-06, -7.6293945e-06)
-scale = Vector2(0.49999997, 2)
-texture = ExtResource("1_ig7tw")
-
-[node name="Pared3" type="StaticBody2D" parent="." unique_id=17133309]
-position = Vector2(288, 192)
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Pared3" unique_id=1198862209]
-scale = Vector2(0.9999992, 0.9999993)
-shape = SubResource("RectangleShape2D_h2yge")
-
-[node name="Sprite2D" type="Sprite2D" parent="Pared3" unique_id=1226206281]
-position = Vector2(-1.0728836e-06, -7.6293945e-06)
-scale = Vector2(0.49999997, 2)
-texture = ExtResource("1_ig7tw")
-
-[node name="Pared4" type="StaticBody2D" parent="." unique_id=758805922]
-position = Vector2(288, -64)
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Pared4" unique_id=1291876602]
-scale = Vector2(0.9999992, 0.9999993)
-shape = SubResource("RectangleShape2D_h2yge")
-
-[node name="Sprite2D" type="Sprite2D" parent="Pared4" unique_id=709616388]
-position = Vector2(-1.0728836e-06, -7.6293945e-06)
-scale = Vector2(0.49999997, 2)
-texture = ExtResource("1_ig7tw")
-
-[node name="Pared5" type="StaticBody2D" parent="." unique_id=953416252]
-position = Vector2(32, -72)
-metadata/_edit_group_ = true
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Pared5" unique_id=204944431]
-scale = Vector2(0.9999992, 0.9999993)
-shape = SubResource("RectangleShape2D_h2yge")
-
-[node name="Sprite2D" type="Sprite2D" parent="Pared5" unique_id=587631632]
-position = Vector2(-1.0728836e-06, -7.6293945e-06)
-scale = Vector2(0.49999997, 2)
-texture = ExtResource("1_ig7tw")
-
-[node name="Floor_Rain_Colission" type="LightOccluder2D" parent="." unique_id=8758765]
-position = Vector2(560, -728)
-occluder = SubResource("OccluderPolygon2D_h2yge")
-
-[node name="Wall_Rain_Colission" type="LightOccluder2D" parent="." unique_id=1661990177]
+[node name="Floor_Rain_Colission" type="LightOccluder2D" parent="Pared" unique_id=169461807]
 occluder = SubResource("OccluderPolygon2D_1bvp3")
 
-[node name="Wall_Rain_Colission2" type="LightOccluder2D" parent="." unique_id=173482787]
-occluder = SubResource("OccluderPolygon2D_lquwl")
+[node name="Pared2" type="StaticBody2D" parent="." unique_id=192195664]
+position = Vector2(472, 48)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pared2" unique_id=1595999959]
+position = Vector2(4.000002, -7.6293945e-06)
+shape = SubResource("RectangleShape2D_h2yge")
+
+[node name="Sprite2D" type="Sprite2D" parent="Pared2" unique_id=1170615527]
+position = Vector2(-1.0728836e-06, -7.6293945e-06)
+texture = ExtResource("4_1bvp3")
+
+[node name="Floor_Rain_Colission" type="LightOccluder2D" parent="Pared2" unique_id=408168322]
+occluder = SubResource("OccluderPolygon2D_1bvp3")
+
+[node name="Pared3" type="StaticBody2D" parent="." unique_id=1131561187]
+position = Vector2(72, -320)
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pared3" unique_id=1834588922]
+position = Vector2(4.000002, -7.6293945e-06)
+shape = SubResource("RectangleShape2D_h2yge")
+
+[node name="Sprite2D" type="Sprite2D" parent="Pared3" unique_id=1912087282]
+position = Vector2(-1.0728836e-06, -7.6293945e-06)
+texture = ExtResource("4_1bvp3")
+
+[node name="Floor_Rain_Colission" type="LightOccluder2D" parent="Pared3" unique_id=1102233671]
+occluder = SubResource("OccluderPolygon2D_1bvp3")
+
+[node name="Pared4" type="StaticBody2D" parent="." unique_id=1062706570]
+position = Vector2(1056.0001, 472.00003)
+rotation = 0.7853982
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pared4" unique_id=1125971773]
+position = Vector2(4.000002, -7.6293945e-06)
+shape = SubResource("RectangleShape2D_h2yge")
+
+[node name="Sprite2D" type="Sprite2D" parent="Pared4" unique_id=1266027830]
+position = Vector2(-1.0728836e-06, -7.6293945e-06)
+texture = ExtResource("4_1bvp3")
+
+[node name="Floor_Rain_Colission" type="LightOccluder2D" parent="Pared4" unique_id=1854733781]
+occluder = SubResource("OccluderPolygon2D_1bvp3")
+
+[node name="Pared5" type="StaticBody2D" parent="." unique_id=1149207814]
+position = Vector2(1504.0001, 24.00003)
+rotation = 0.7853982
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Pared5" unique_id=1092532954]
+position = Vector2(4.000002, -7.6293945e-06)
+shape = SubResource("RectangleShape2D_h2yge")
+
+[node name="Sprite2D" type="Sprite2D" parent="Pared5" unique_id=214366173]
+position = Vector2(-1.0728836e-06, -7.6293945e-06)
+texture = ExtResource("4_1bvp3")
+
+[node name="Floor_Rain_Colission" type="LightOccluder2D" parent="Pared5" unique_id=711323201]
+occluder = SubResource("OccluderPolygon2D_1bvp3")
