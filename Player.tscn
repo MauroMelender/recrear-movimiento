@@ -27,6 +27,7 @@
 [ext_resource type="Texture2D" uid="uid://dykdgq7sx4ovh" path="res://sprites/animations/H_RunCycle_08.png" id="26_njqbf"]
 [ext_resource type="Texture2D" uid="uid://be687lf2jleke" path="res://sprites/animations/H_WallImpact_02.png" id="28_mft6i"]
 [ext_resource type="Texture2D" uid="uid://8x2el4hgpjww" path="res://sprites/animations/H_WallImpact_03.png" id="29_ctv73"]
+[ext_resource type="PackedScene" uid="uid://bx34vgadmts34" path="res://vfx_dust.tscn" id="29_ictha"]
 [ext_resource type="Texture2D" uid="uid://bktde20gquv7g" path="res://sprites/animations/H_WallImpact_04.png" id="30_1ofp1"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_kpjcp"]
@@ -438,15 +439,16 @@ wall_jump_force = -700.0
 position = Vector2(-1.625, -19.725)
 scale = Vector2(0.4, 0.4)
 sprite_frames = SubResource("SpriteFrames_kpjcp")
-animation = &"wall_slide"
+animation = &"run"
 
 [node name="CharacterColision" type="CollisionShape2D" parent="." unique_id=486978369]
 position = Vector2(-1, 0)
 shape = SubResource("CapsuleShape2D_kne1u")
 debug_color = Color(0.52813464, 0.4145342, 1, 0.41960785)
 
-[node name="PlayerControl" type="Node" parent="." unique_id=415277098]
+[node name="PlayerControl" type="Node" parent="." unique_id=415277098 node_paths=PackedStringArray("vfx_dust")]
 script = ExtResource("4_e80uo")
+vfx_dust = NodePath("../vfx_dust/par_vfx_dust")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=242988265]
 callback_mode_process = 0
@@ -456,3 +458,14 @@ libraries/ = SubResource("AnimationLibrary_1jgrc")
 process_callback = 0
 position_smoothing_enabled = true
 position_smoothing_speed = 7.0
+
+[node name="vfx_dust" parent="." unique_id=845160056 instance=ExtResource("29_ictha")]
+
+[node name="par_vfx_dust" parent="vfx_dust" index="0" unique_id=1597162101]
+amount = 479
+lifetime = 0.4
+explosiveness = 0.0
+scale_amount_min = 4.0
+scale_amount_max = 10.0
+
+[editable path="vfx_dust"]

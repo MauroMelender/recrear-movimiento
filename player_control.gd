@@ -12,28 +12,42 @@ var previous_state: STATE = STATE.IDLE
 enum STATE { IDLE, RUNNING, JUMPING, FALLING, WALL_SLIDING }
 var current_state: STATE = STATE.IDLE
 
-# Polvo
-
-var dust_vfx: CPUParticles2D
-
-
+# Polvo - ASIGNAR EN EL INSPECTOR (Nodo par_vfx_dust)
+@export var vfx_dust: CPUParticles2D
 
 func _ready():
 	player = self.owner as Player
 	if player:
 		anim_player = player.get_node("AnimationPlayer")
 		anim_sprite = player.get_node("AnimatedSprite2D")
-		dust_vfx = player.get_node("DustVFX/CPUParticles2D") # ajustá el path
-		anim_sprite.frame_changed.connect(_on_frame_changed)
+		
+		# Conectamos la señal. Asegúrate de que el AnimatedSprite2D tenga frames.
+		if anim_sprite:
+			anim_sprite.frame_changed.connect(_on_frame_changed)
 	else:
-		print("ERROR: player es null")
+		print("ERROR: player es null en el script de control")
 
 func _on_frame_changed():
-	if current_state == STATE.RUNNING:
-		# Activá en frames específicos, ej: frame 2 y 5
-		if anim_sprite.frame in [2, 5]:
-			dust_vfx.restart()
-			dust_vfx.emitting = true
+	if anim_sprite.animation == "run":
+		if anim_sprite.frame in [2, 6]:
+			# Usamos last_direction para que el 40 sea positivo o negativo
+			# Si last_direction es 1.0, X será 40. Si es -1.0, X será -40.
+			var offset_x = 40.0 * last_direction
+			var offset_y = 65.0
+			
+			vfx_dust.position = Vector2(offset_x, offset_y)
+			
+				
+			# 2. EMISIÓN CONTROLADA
+			# NO usamos restart() porque borra las anteriores.
+			# Simplemente activamos la emisión. 
+			vfx_dust.emitting = true
+			
+			# Opcional: Si querés que tire "puchitos" exactos, 
+			# podés crear un timer rápido para apagarlo:
+			await get_tree().create_timer(0.01).timeout
+			vfx_dust.emitting = false
+
 
 func _physics_process(delta: float): 
 	if player == null: return  
@@ -119,6 +133,9 @@ func _physics_process(delta: float):
 		STATE.RUNNING:
 			anim_sprite.position.x = face_dir * 0.0
 			play_anim("run")
+			# Volteo de partículas: Si el personaje mira a la izquierda, las partículas salen hacia la derecha
+			if vfx_dust:
+				vfx_dust.scale.x = -face_dir
 		STATE.JUMPING:
 			anim_sprite.position.x = face_dir * 4.0
 			play_anim("jump")
@@ -157,7 +174,6 @@ func _physics_process(delta: float):
 func play_anim(anim_name: String):
 	if anim_sprite == null: return
 	if not anim_sprite.sprite_frames.has_animation(anim_name):
-		print("no existe: ", anim_name)
 		return
 	if anim_sprite.animation == anim_name and anim_sprite.is_playing():
 		return
