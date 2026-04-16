@@ -17,7 +17,6 @@ func _ready():
 	if player:
 		anim_player = player.get_node("AnimationPlayer")
 		anim_sprite = player.get_node("AnimatedSprite2D")
-		print("anim_player: ", anim_player)
 	else:
 		print("ERROR: player es null")
 
@@ -90,37 +89,36 @@ func _physics_process(delta: float):
 		if input_dir != 0:
 			accel = player.air_acceleration * (0.1 if is_wall_jumping else 1.0)
 		else:
-			accel = 0.0 if is_wall_jumping else player.air_friction 
+			accel = 0.0 if is_wall_jumping else player.air_friction
 
 	player.velocity.x = lerp(player.velocity.x, target_vel_x, accel * delta)
 
-	# --- 4. ANIMACIONES Y MECÁNICAS ---
-	# Solo actualizamos animación si el estado cambió o no hay nada reproduciéndose
-	if current_state != previous_state or not anim_player.is_playing():
-		match current_state:
-			STATE.IDLE:
-				play_anim("idle_r" if last_direction > 0 else "idle_l")
+	# --- 4. ANIMACIONES ---
+	var face_dir = input_dir if input_dir != 0 else last_direction
+	anim_sprite.flip_h = face_dir > 0
 
-			STATE.RUNNING:
-				play_anim("run_r" if input_dir > 0 else "run_l")
+	match current_state:
+		STATE.IDLE:
+			anim_sprite.position.x = face_dir * 4.0
+			play_anim("idle")
+		STATE.RUNNING:
+			anim_sprite.position.x = face_dir * 0.0
+			play_anim("run")
+		STATE.JUMPING:
+			anim_sprite.position.x = face_dir * 4.0
+			play_anim("jump")
+		STATE.FALLING:
+			anim_sprite.position.x = face_dir * 4.0
+			play_anim("falling")
+		STATE.WALL_SLIDING:
+			var wall_normal = player.get_wall_normal()
+			var side = wall_normal.x if player.is_on_wall() else -last_direction
+			anim_sprite.flip_h = side < 0
+			last_direction = side
+			anim_sprite.position.x = side * 33.0
+			play_anim("wall_slide")
 
-			STATE.JUMPING:
-				play_anim("jump_r" if (input_dir if input_dir != 0 else last_direction) > 0 else "jump_l")
-
-			STATE.FALLING:
-				play_anim("falling_r" if (input_dir if input_dir != 0 else last_direction) > 0 else "falling_l")
-
-			STATE.WALL_SLIDING:
-				var wall_normal = player.get_wall_normal()
-				var side = wall_normal.x if player.is_on_wall() else -last_direction
-				if side > 0:
-					play_anim("wall_slide_l")
-					last_direction = -1.0
-				else:
-					play_anim("wall_slide_r")
-					last_direction = 1.0
-
-	# Mecánicas que deben ejecutarse siempre, fuera del bloque de animación
+	# --- 5. MECÁNICAS ---
 	if current_state == STATE.JUMPING:
 		if Input.is_action_just_released("ui_up") and player.velocity.y < 0:
 			player.velocity.y *= 0.5
@@ -138,7 +136,6 @@ func _physics_process(delta: float):
 			current_state = STATE.JUMPING
 
 	previous_state = current_state
-
 	handle_gravity(delta)
 	player.move_and_slide()
 
@@ -149,10 +146,8 @@ func play_anim(anim_name: String):
 		return
 	if anim_sprite.animation == anim_name and anim_sprite.is_playing():
 		return
-	# AnimatedSprite2D maneja el sprite
 	anim_sprite.play(anim_name)
-	# AnimationPlayer maneja position/flip_h si existe esa animación
-	if anim_player.has_animation(anim_name):
+	if anim_player != null and anim_player.has_animation(anim_name):
 		anim_player.play(anim_name)
 
 func handle_gravity(delta):
