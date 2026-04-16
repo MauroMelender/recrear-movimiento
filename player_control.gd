@@ -4,14 +4,16 @@ extends Node
 @onready var anim_player: AnimationPlayer = player.get_node("AnimationPlayer")
 
 var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
-var last_direction: float = 1.0 # Empezamos mirando a la derecha
+var last_direction: float = 1.0
 var is_wall_jumping: bool = false
+var previous_state: STATE = STATE.IDLE
 
 enum STATE { IDLE, RUNNING, JUMPING, FALLING, WALL_SLIDING }
 var current_state: STATE = STATE.IDLE
 
 func _physics_process(delta: float): 
 	if player == null: return  
+
 	# --- 1. CAPTURA DE INPUT ---
 	var input_dir = 0.0
 	var left = Input.is_action_pressed("ui_left")
@@ -28,34 +30,35 @@ func _physics_process(delta: float):
 		input_dir = 1.0
 		last_direction = 1.0
 
-	# --- 2. LÓGICA DE TRANSICIÓN (Con Enganche Magnético) ---
-	var wall_sensor_distance = 2.0 # Cuántos píxeles "busca" la pared
+	# --- 2. LÓGICA DE TRANSICIÓN ---
+	var wall_sensor_distance = 8.0
 	
 	match current_state:
 		STATE.IDLE:
-			if not player.is_on_floor(): current_state = STATE.FALLING
+			if not player.is_on_floor():
+				current_state = STATE.FALLING
 			elif Input.is_action_just_pressed("ui_up"):
 				player.velocity.y = player.jump_velocity
 				current_state = STATE.JUMPING
-			elif input_dir != 0: current_state = STATE.RUNNING
+			elif input_dir != 0:
+				current_state = STATE.RUNNING
 
 		STATE.RUNNING:
-			if not player.is_on_floor(): current_state = STATE.FALLING
+			if not player.is_on_floor():
+				current_state = STATE.FALLING
 			elif Input.is_action_just_pressed("ui_up"):
 				player.velocity.y = player.jump_velocity
 				current_state = STATE.JUMPING
-			elif input_dir == 0 and abs(player.velocity.x) < 10.0: current_state = STATE.IDLE
+			elif input_dir == 0 and abs(player.velocity.x) < 10.0:
+				current_state = STATE.IDLE
 
 		STATE.JUMPING, STATE.FALLING:
 			if player.is_on_floor():
 				current_state = STATE.IDLE if input_dir == 0 else STATE.RUNNING
 			else:
-				# RAYCAST INVISIBLE (test_move):
-				# Probamos si hay una pared hacia donde estamos mirando o moviéndonos
 				var check_dir = input_dir if input_dir != 0 else last_direction
 				var collision_near = player.test_move(player.global_transform, Vector2(check_dir * wall_sensor_distance, 0))
-				
-				if collision_near and input_dir != 0:
+				if collision_near and player.velocity.y > 0:
 					current_state = STATE.WALL_SLIDING
 				elif player.velocity.y >= 0:
 					current_state = STATE.FALLING
@@ -81,56 +84,60 @@ func _physics_process(delta: float):
 
 	player.velocity.x = lerp(player.velocity.x, target_vel_x, accel * delta)
 
-	# --- 4. EJECUCIÓN DE ANIMACIONES Y MECÁNICAS ---
-	match current_state:
-		STATE.IDLE:
-			play_anim("idle_r" if last_direction > 0 else "idle_l")
+	# --- 4. ANIMACIONES Y MECÁNICAS ---
+	# Solo actualizamos animación si el estado cambió o no hay nada reproduciéndose
+	if current_state != previous_state or not anim_player.is_playing():
+		match current_state:
+			STATE.IDLE:
+				play_anim("idle_r" if last_direction > 0 else "idle_l")
 
-		STATE.RUNNING:
-			play_anim("run_r" if input_dir > 0 else "run_l")
+			STATE.RUNNING:
+				play_anim("run_r" if input_dir > 0 else "run_l")
 
-		STATE.JUMPING:
-			play_anim("jump_r" if (input_dir if input_dir != 0 else last_direction) > 0 else "jump_l")
-			if Input.is_action_just_released("ui_up") and player.velocity.y < 0:
-				player.velocity.y *= 0.5
-		
-		STATE.FALLING:
-			play_anim("falling_r" if (input_dir if input_dir != 0 else last_direction) > 0 else "falling_l")
+			STATE.JUMPING:
+				play_anim("jump_r" if (input_dir if input_dir != 0 else last_direction) > 0 else "jump_l")
 
-		STATE.WALL_SLIDING:
+			STATE.FALLING:
+				play_anim("falling_r" if (input_dir if input_dir != 0 else last_direction) > 0 else "falling_l")
+
+			STATE.WALL_SLIDING:
+				var wall_normal = player.get_wall_normal()
+				var side = wall_normal.x if player.is_on_wall() else -last_direction
+				if side > 0:
+					play_anim("wall_slide_l")
+					last_direction = -1.0
+				else:
+					play_anim("wall_slide_r")
+					last_direction = 1.0
+
+	# Mecánicas que deben ejecutarse siempre, fuera del bloque de animación
+	if current_state == STATE.JUMPING:
+		if Input.is_action_just_released("ui_up") and player.velocity.y < 0:
+			player.velocity.y *= 0.5
+
+	if current_state == STATE.WALL_SLIDING:
+		if player.velocity.y < 0: player.velocity.y = 0
+		player.velocity.y = min(player.velocity.y, player.wall_slide_gravity)
+		if Input.is_action_just_pressed("ui_up"):
 			var wall_normal = player.get_wall_normal()
-			# Si por el test_move entramos pero aún no tocamos la pared físicamente, 
-			# usamos last_direction para elegir la animación
-			var side = wall_normal.x if player.is_on_wall() else -last_direction
-			
-			if side > 0:
-				play_anim("wall_slide_l")
-				last_direction = -1.0
-			else:
-				play_anim("wall_slide_r")
-				last_direction = 1.0
+			var jump_side = wall_normal.x if player.is_on_wall() else -last_direction
+			player.velocity.x = jump_side * player.wall_jump_pushback
+			player.velocity.y = player.wall_jump_force
+			is_wall_jumping = true
+			last_direction = jump_side
+			current_state = STATE.JUMPING
 
-			if player.velocity.y < 0: player.velocity.y = 0
-			player.velocity.y = min(player.velocity.y, player.wall_slide_gravity)
-			
-			if Input.is_action_just_pressed("ui_up"):
-				# Recuperamos el impulso lateral del wall jump
-				var jump_side = wall_normal.x if player.is_on_wall() else -last_direction
-				player.velocity.x = jump_side * player.wall_jump_pushback
-				player.velocity.y = player.wall_jump_force
-				is_wall_jumping = true
-				last_direction = jump_side
-				current_state = STATE.JUMPING
+	previous_state = current_state
 
 	handle_gravity(delta)
 	player.move_and_slide()
 
-# FUNCIÓN PARA EVITAR CONGELACIÓN
 func play_anim(anim_name: String):
-	if anim_player.has_animation(anim_name):
-		if anim_player.current_animation != anim_name:
-			print("Cambiando a: ", anim_name) # <--- AÑADE ESTO
-			anim_player.play(anim_name)
+	if not anim_player.has_animation(anim_name):
+		return
+	if anim_player.current_animation == anim_name and anim_player.is_playing():
+		return
+	anim_player.play(anim_name)
 
 func handle_gravity(delta):
 	if not player.is_on_floor():
