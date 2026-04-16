@@ -3,7 +3,6 @@
 [ext_resource type="Texture2D" uid="uid://fp6jiq4jaedc" path="res://icon.svg" id="1_ig7tw"]
 [ext_resource type="PackedScene" uid="uid://bbe4ob0siauam" path="res://Player.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cy26t0uqe6gsp" path="res://vfx_rain.tscn" id="3_h2yge"]
-[ext_resource type="PackedScene" uid="uid://bx34vgadmts34" path="res://vfx_h_pasos.tscn" id="4_1bvp3"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_0xm2m"]
 size = Vector2(1128, 74)
@@ -27,9 +26,6 @@ position = Vector2(596, 472)
 
 [node name="VFX_Rain" parent="CharacterBody2D" unique_id=411849381 instance=ExtResource("3_h2yge")]
 position = Vector2(-12, -408)
-
-[node name="VFX_H_Pasos" parent="CharacterBody2D" unique_id=845160056 instance=ExtResource("4_1bvp3")]
-position = Vector2(-596, -472)
 
 [node name="Suelo" type="StaticBody2D" parent="." unique_id=1883965058]
 

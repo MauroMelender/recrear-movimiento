@@ -131,7 +131,7 @@ animations = [{
 "texture": ExtResource("30_1ofp1")
 }],
 "loop": true,
-"name": &"wall_slide",
+"name": &"wall_impact",
 "speed": 6.0
 }]
 
@@ -367,7 +367,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(0, -12.375)]
+"values": [Vector2(34.325, -12.375)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -386,7 +386,7 @@ tracks/1/keys = {
 resource_name = "wall_slide_r"
 tracks/0/type = "value"
 tracks/0/imported = false
-tracks/0/enabled = false
+tracks/0/enabled = true
 tracks/0/path = NodePath("AnimatedSprite2D:position")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
@@ -394,7 +394,7 @@ tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(0, -12.375)]
+"values": [Vector2(-34.325, -12.375)]
 }
 tracks/1/type = "value"
 tracks/1/imported = false
@@ -435,10 +435,12 @@ wall_jump_pushback = 400.0
 wall_jump_force = -700.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1464964639]
-position = Vector2(-1.625, -19.725)
+position = Vector2(-34.325, -12.375)
 scale = Vector2(0.4, 0.4)
 sprite_frames = SubResource("SpriteFrames_kpjcp")
-animation = &"wall_slide"
+animation = &"wall_impact"
+frame_progress = 0.16966547
+flip_h = true
 
 [node name="CharacterColision" type="CollisionShape2D" parent="." unique_id=486978369]
 position = Vector2(-1, 0)
