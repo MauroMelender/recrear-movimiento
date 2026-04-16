@@ -10,10 +10,10 @@ point_count = 3
 offsets = PackedFloat32Array(0.1324201, 1)
 colors = PackedColorArray(1, 1, 1, 0.9137255, 0.20392157, 0.19607843, 0.19215687, 0.27058825)
 
-[node name="VFX_H_Pasos" type="Node2D" unique_id=845160056]
+[node name="VFX_H_dust" type="Node2D" unique_id=845160056]
 script = ExtResource("1_8bp0u")
 
-[node name="par_pasos" type="CPUParticles2D" parent="." unique_id=1597162101]
+[node name="par_dust" type="CPUParticles2D" parent="." unique_id=1597162101]
 emitting = false
 amount = 7
 lifetime = 0.4

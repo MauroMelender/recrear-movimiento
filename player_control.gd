@@ -12,13 +12,28 @@ var previous_state: STATE = STATE.IDLE
 enum STATE { IDLE, RUNNING, JUMPING, FALLING, WALL_SLIDING }
 var current_state: STATE = STATE.IDLE
 
+# Polvo
+
+var dust_vfx: CPUParticles2D
+
+
+
 func _ready():
 	player = self.owner as Player
 	if player:
 		anim_player = player.get_node("AnimationPlayer")
 		anim_sprite = player.get_node("AnimatedSprite2D")
+		dust_vfx = player.get_node("DustVFX/CPUParticles2D") # ajustá el path
+		anim_sprite.frame_changed.connect(_on_frame_changed)
 	else:
 		print("ERROR: player es null")
+
+func _on_frame_changed():
+	if current_state == STATE.RUNNING:
+		# Activá en frames específicos, ej: frame 2 y 5
+		if anim_sprite.frame in [2, 5]:
+			dust_vfx.restart()
+			dust_vfx.emitting = true
 
 func _physics_process(delta: float): 
 	if player == null: return  
