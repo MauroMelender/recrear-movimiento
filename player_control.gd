@@ -1,7 +1,8 @@
 extends Node
 
-@onready var player: Player = self.owner 
-@onready var anim_player: AnimationPlayer = player.get_node("AnimationPlayer")
+var player: Player
+var anim_player: AnimationPlayer
+var anim_sprite: AnimatedSprite2D
 
 var gravity: float = ProjectSettings.get_setting("physics/2d/default_gravity")
 var last_direction: float = 1.0
@@ -10,6 +11,15 @@ var previous_state: STATE = STATE.IDLE
 
 enum STATE { IDLE, RUNNING, JUMPING, FALLING, WALL_SLIDING }
 var current_state: STATE = STATE.IDLE
+
+func _ready():
+	player = self.owner as Player
+	if player:
+		anim_player = player.get_node("AnimationPlayer")
+		anim_sprite = player.get_node("AnimatedSprite2D")
+		print("anim_player: ", anim_player)
+	else:
+		print("ERROR: player es null")
 
 func _physics_process(delta: float): 
 	if player == null: return  
@@ -133,11 +143,17 @@ func _physics_process(delta: float):
 	player.move_and_slide()
 
 func play_anim(anim_name: String):
-	if not anim_player.has_animation(anim_name):
+	if anim_sprite == null: return
+	if not anim_sprite.sprite_frames.has_animation(anim_name):
+		print("no existe: ", anim_name)
 		return
-	if anim_player.current_animation == anim_name and anim_player.is_playing():
+	if anim_sprite.animation == anim_name and anim_sprite.is_playing():
 		return
-	anim_player.play(anim_name)
+	# AnimatedSprite2D maneja el sprite
+	anim_sprite.play(anim_name)
+	# AnimationPlayer maneja position/flip_h si existe esa animación
+	if anim_player.has_animation(anim_name):
+		anim_player.play(anim_name)
 
 func handle_gravity(delta):
 	if not player.is_on_floor():
