@@ -546,6 +546,7 @@ _data = {
 [node name="Player" type="CharacterBody2D" unique_id=1481881666]
 safe_margin = 0.2
 script = ExtResource("1_kne1u")
+running_speed = 500.0
 jump_velocity = -700.0
 acceleration = 20.0
 air_acceleration = 20.0
